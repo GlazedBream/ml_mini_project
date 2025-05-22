@@ -1,5 +1,6 @@
 ## 📄 README.md 초안 – 방송 장르 예측 챗봇 (Streamlit + Scikit-learn)
-
+---
+![image](thumbnails/streamlit_app.png)
 ---
 
 ### 📌 프로젝트 소개
