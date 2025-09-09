@@ -1,3 +1,10 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Other
 PROJECT_SUMMARY.md
 /archive/
 .env
