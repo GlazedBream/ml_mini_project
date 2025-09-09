@@ -1,0 +1,11 @@
+streamlit
+pandas
+scikit-learn
+joblib
+SQLAlchemy
+PyMySQL
+python-dotenv
+matplotlib
+openpyxl
+xlrd
+numpy

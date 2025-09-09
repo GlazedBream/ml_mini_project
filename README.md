@@ -1,136 +1,110 @@
-## 📄 방송 장르 예측 챗봇 (Streamlit + Scikit-learn)
+# IPTV 시청 데이터 분석 대시보드
 
-### 📌 프로젝트 소개
+LG U+의 IPTV 시청 데이터를 활용하여, 머신러닝 기반의 **방송 장르 예측**과 **지역별 고객군 세분화(Clustering)** 분석을 수행하는 Streamlit 대시보드입니다.
 
-이 프로젝트는 사용자의 TV 시청 패턴을 입력 받아, **방송 장르(스포츠, 애니메이션, 키즈, 홈쇼핑)** 를 예측하는 **머신러닝 기반 챗봇**입니다.
-사용자는 슬라이더로 시청 시간을 입력하면, Scikit-learn으로 학습된 **Random Forest 모델**이 방송 장르를 예측하고 챗봇 형식으로 결과를 반환합니다.
-
----
-
-### 🛠️ 기술 스택
-
-* **Frontend**: [Streamlit](https://streamlit.io/)
-* **Backend**: Python 3.12
-* **ML 모델**: Scikit-learn (`RandomForestClassifier`, `LabelEncoder`, `StandardScaler`)
-* **모델 저장/로딩**: `joblib`
-* **이미지 출력**: 각 예측 장르별 시각적 응답 이미지 (`img/` 폴더 활용)
+이 프로젝트는 단순한 모델링을 넘어, 데이터 분석 결과를 비즈니스 인사이트로 연결하고 사용자와 상호작용하는 동적인 웹 애플리케이션을 구축하는 전체 과정을 보여줍니다.
 
 ---
 
-### 📁 프로젝트 구조
+##  주요 기능
+
+### 1. 방송 장르 예측 챗봇
+- 사용자의 시청 습관(하루 평균 시청 프로그램 수, 시간대별 시청 시간)을 입력받아 가장 선호할 것으로 예상되는 방송 장르(스포츠, 애니메이션, 키즈, 홈쇼핑)를 예측합니다.
+- Scikit-learn의 `RandomForestClassifier` 모델을 사용하며, 예측 결과는 챗봇 형태의 UI를 통해 시각적인 이미지와 함께 제공됩니다.
+
+### 2. 지역 기반 고객군 분석
+- 시청 패턴이 유사한 지역(행정동) 그룹을 찾기 위해 `K-Means` 클러스터링 분석을 수행합니다.
+- **Elbow Method**를 통해 최적의 클러스터 개수(K)를 탐색하고, **레이더 차트(Radar Chart)**로 클러스터별 특성을 직관적으로 시각화합니다.
+- 각 클러스터에 **페르소나(Persona)**를 부여하여 데이터 기반의 비즈니스 해석을 제시합니다. (예: '새벽 시청이 활발한 다(多)시청 그룹')
+
+---
+
+## 데모 스크린샷
+
+| 1. 방송 장르 예측 챗봇 | 2. 지역 기반 고객군 분석 |
+| :---: | :---: |
+| <img src="thumbnails/streamlit_app1.png" width="400"> | <img src="thumbnails/streamlit_app2.png" width="400"> |
+
+---
+
+## 🛠️ 기술 스택
+
+- **Frontend**: Streamlit
+- **Backend**: Python
+- **Database**: MySQL
+- **Data Handling**: Pandas, SQLAlchemy
+- **Machine Learning**: Scikit-learn (RandomForestClassifier, KMeans, StandardScaler)
+- **Visualization**: Matplotlib
+- **Configuration**: python-dotenv
+
+---
+
+## 📁 프로젝트 구조
 
 ```
-genre_chatbot/
-├── app.py                # Streamlit 메인 앱
-├── models/
-│   ├── rf.joblib         # RandomForest 모델
-│   ├── scaler.joblib     # StandardScaler
-│   └── le.joblib         # LabelEncoder
-├── img/
-│   ├── 0.png             # 스포츠 예측 결과 이미지
-│   ├── 1.png             # 애니메이션 예측 결과 이미지
-│   ├── 2.png             # 키즈 예측 결과 이미지
-│   └── 3.png             # 홈쇼핑 예측 결과 이미지
-└── README.md             # 설명 문서 (본 파일)
+. 
+├── data/                     # 원본 CSV 데이터 및 컬럼 정의
+├── img/                      # 챗봇 이미지 에셋
+├── models/                   # 학습된 머신러닝 모델 (joblib)
+├── result/                   # 분석 시 생성되는 차트 이미지 저장
+├── thumbnails/               # README용 썸네일 이미지
+├── .env.example              # 환경변수 예시 파일
+├── .gitignore
+├── main.py                   # Streamlit 메인 애플리케이션
+├── requirements.txt          # Python 라이브러리 의존성
+├── segmentation.py           # 고객군 세분화 분석 모듈
+├── sql.py                    # DB 테이블 생성 및 데이터 로딩 스크립트
+└── README.md
 ```
 
 ---
 
-### 🚀 실행 방법
+## 🚀 설치 및 실행 방법
 
-#### 1. 가상 환경 준비 및 의존성 설치
+### 1. 프로젝트 복제 및 환경 설정
 
 ```bash
-conda create -n genre_chatbot python=3.12
-conda activate genre_chatbot
-pip install streamlit scikit-learn joblib
+# 1. 프로젝트를 로컬에 복제합니다.
+
+# 2. Conda 가상 환경을 생성하고 활성화합니다.
+conda create -n iptv-dashboard python=3.12
+conda activate iptv-dashboard
+
+# 3. .env 파일을 설정합니다.
+# .env.example 파일을 복사하여 .env 파일을 생성하고, 자신의 DB 정보를 입력합니다.
+# cp .env.example .env (macOS/Linux)
+# copy .env.example .env (Windows)
 ```
 
-#### 2. 실행
+### 2. 의존성 설치
+
+`requirements.txt` 파일을 사용하여 필요한 모든 라이브러리를 한 번에 설치합니다.
 
 ```bash
-streamlit run app.py
+pip install -r requirements.txt
+```
+
+### 3. 데이터베이스 설정
+
+- 로컬 환경에 **MySQL**을 설치하고, `.env` 파일에 설정한 스키마(예: `ml_mini_project`)를 미리 생성해두어야 합니다.
+- 아래 스크립트를 실행하여 DB에 테이블을 생성하고 원본 데이터를 저장합니다.
+
+```bash
+python sql.py
+```
+
+### 4. 대시보드 실행
+
+아래 명령어를 실행하여 Streamlit 대시보드를 시작합니다.
+
+```bash
+streamlit run main.py
 ```
 
 ---
 
-### 🧠 입력 설명
-
-사용자는 다음 다섯 가지 슬라이더 입력을 통해 예측을 수행합니다:
-
-* **하루 평균 시청 프로그램 수** (`avrg_wtchng_co`)
-* **새벽 평균 시청 시간 (분)** (`dawn_avrg_wtchng_time_co`)
-* **오전 평균 시청 시간 (분)** (`am_avrg_wtchng_time_co`)
-* **오후 평균 시청 시간 (분)** (`pm_avrg_wtchng_time_co`)
-* **저녁 평균 시청 시간 (분)** (`evening_avrg_wtchng_time_co`)
-
----
-
-### 💬 사용 예시
-
-1. 슬라이더로 시청 데이터를 설정하고 **\[채팅 추가]** 버튼 클릭
-2. 사용자 입력을 바탕으로 방송 장르 예측
-3. 챗봇 응답 메시지와 함께 시각적 이미지 출력
-4. 모든 채팅 히스토리는 우측 영역에 누적 표시
-
----
-
-### 🧪 모델 훈련 및 저장 예시 (선택 사항)
-
-```python
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.preprocessing import LabelEncoder, StandardScaler
-import joblib
-
-# 예시 데이터 학습
-X = ...  # feature matrix
-y = ...  # target labels
-
-le = LabelEncoder()
-y_encoded = le.fit_transform(y)
-
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
-
-rf = RandomForestClassifier()
-rf.fit(X_scaled, y_encoded)
-
-# 모델 저장
-joblib.dump(le, 'models/le.joblib')
-joblib.dump(scaler, 'models/scaler.joblib')
-joblib.dump(rf, 'models/rf.joblib')
-```
-
----
-
-### 📌 주요 기능 요약
-
-* ✅ Streamlit 기반 웹 UI
-* ✅ 시청 패턴 입력 → 방송 장르 예측
-* ✅ 대화 저장 및 시각적 응답 제공
-* ✅ 채팅 내역 초기화 기능 포함
-* ✅ 학습된 모델 재사용 (joblib)
-
----
-
-### 📷 예측 결과 이미지 예시
-
-| 장르    | 이미지 파일명 |
-| ----- | ------- |
-| 스포츠   | `0.png` |
-| 애니메이션 | `1.png` |
-| 키즈    | `2.png` |
-| 홈쇼핑   | `3.png` |
-
----
-
-### 📊 사용 데이터셋 소개
-
-이 프로젝트는 **LG유플러스의 'U+ IPTV 시청통계' 무료 샘플 데이터**를 기반으로 머신러닝 모델을 학습하였습니다.
+## 📊 사용 데이터셋
 
 - **데이터셋 이름**: U+ IPTV 시청통계
 - **제공처**: LG유플러스 / 한국지능정보사회진흥원(NIA)
-- **주요 내용**: IPTV 가입자들의 시간대별 평균 시청시간, 시청 프로그램 수, 시청 장르 등
-- **활용 목적**: 시청 패턴 데이터를 기반으로 사용자가 선호할 방송 장르를 예측하는 챗봇 구현
-- **URL**:  
-  [https://www.bigdata-culture.kr/bigdata/user/data_market/detail.do?id=612fe7e0-f0d2-11eb-8e60-2bcdc8456bfb](https://www.bigdata-culture.kr/bigdata/user/data_market/detail.do?id=612fe7e0-f0d2-11eb-8e60-2bcdc8456bfb)
+- **URL**: [Link](https://www.bigdata-culture.kr/bigdata/user/data_market/detail.do?id=612fe7e0-f0d2-11eb-8e60-2bcdc8456bfb)
